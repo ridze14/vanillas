@@ -1,0 +1,1235 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VANILLAS | Authentic Survival</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --bg-color: #09090b;
+            --accent: #8b5cf6;
+            --accent-hover: #7c3aed;
+            --accent-glow: rgba(139, 92, 246, 0.4);
+            --bg-glass: rgba(24, 24, 27, 0.6);
+            --bg-glass-hover: rgba(39, 39, 42, 0.8);
+            --border-glass: rgba(255, 255, 255, 0.08);
+            --text-main: #f4f4f5;
+            --text-dim: #a1a1aa;
+            --discord-color: #5865F2;
+            --discord-glow: rgba(88, 101, 242, 0.3);
+            --info-blue: #38bdf8;
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; outline: none; }
+        
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            min-height: 100vh;
+            overflow-x: hidden;
+            line-height: 1.5;
+            display: flex;
+            flex-direction: column;
+        }
+
+        body::before {
+            content: ''; 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle at 50% 0%, rgba(139, 92, 246, 0.15) 0%, transparent 50%),
+                        radial-gradient(circle at 100% 100%, rgba(88, 101, 242, 0.08) 0%, transparent 50%);
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .container { flex: 1; max-width: 1200px; margin: 0 auto; padding: 0 24px; width: 100%; display: flex; flex-direction: column; }
+        
+        .glass {
+            background: var(--bg-glass);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--border-glass);
+            border-radius: 16px;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+        }
+        
+        /* --- АНИМАЦИИ --- */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .fade-in { animation: fadeInUp 0.6s ease-out forwards; }
+        .delay-1 { animation-delay: 0.1s; opacity: 0; }
+        .delay-2 { animation-delay: 0.2s; opacity: 0; }
+        .delay-3 { animation-delay: 0.3s; opacity: 0; }
+
+        /* --- ВЬЮХИ (SPA) --- */
+        .view-section { display: none; flex: 1; animation: fadeInUp 0.4s ease-out forwards; padding-bottom: 60px; }
+        .view-section.active { display: block; }
+
+        .admin-section { display: none; animation: fadeInUp 0.3s ease-out forwards; }
+        .admin-section.active { display: block; }
+
+        /* --- HEADER & TABS --- */
+        header { padding: 32px 0; }
+        .nav-bar { display: flex; justify-content: space-between; align-items: center; padding: 16px 32px; }
+        .logo { font-size: 1.5rem; font-weight: 800; color: #fff; letter-spacing: -0.5px; }
+        .logo span { color: var(--accent); }
+        .nav-tabs { display: flex; gap: 6px; align-items: center; }
+        .nav-tab {
+            display: flex; align-items: center; gap: 8px; padding: 10px 16px; 
+            color: var(--text-dim); text-decoration: none; font-size: 0.9rem; 
+            font-weight: 500; border-radius: 10px; transition: var(--transition); cursor: pointer;
+        }
+        .nav-tab:hover, .nav-tab.active { background: rgba(255, 255, 255, 0.08); color: #fff; }
+        .nav-tab i { font-size: 1.1rem; opacity: 0.8; }
+        .nav-tab.active i { color: var(--accent); opacity: 1; }
+
+        .user-block { display: flex; gap: 4px; align-items: center; border-left: 1px solid var(--border-glass); padding-left: 16px; margin-left: 12px; }
+        
+        /* --- HERO --- */
+        .hero { text-align: center; padding: 60px 0 40px; }
+        .hero h1 {
+            font-size: 5rem; font-weight: 800; margin-bottom: 16px; letter-spacing: -1.5px;
+            background: linear-gradient(135deg, #fff 0%, #a1a1aa 100%); 
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        #siteDesc { color: var(--text-dim); margin-bottom: 40px; font-size: 1.2rem; font-weight: 400; }
+        .badges-container { display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; }
+        
+        .badge-btn {
+            display: inline-flex; align-items: center; gap: 12px; 
+            padding: 14px 28px; border-radius: 12px; font-weight: 600; font-size: 1rem;
+            cursor: pointer; transition: var(--transition); text-decoration: none;
+        }
+        .ip-badge { background: rgba(139, 92, 246, 0.1); border: 1px solid var(--accent); color: #fff; }
+        .ip-badge:hover { background: rgba(139, 92, 246, 0.2); box-shadow: 0 0 24px var(--accent-glow); transform: translateY(-2px); }
+        .discord-badge { background: rgba(88, 101, 242, 0.1); border: 1px solid var(--discord-color); color: #fff; }
+        .discord-badge:hover { background: rgba(88, 101, 242, 0.2); box-shadow: 0 0 24px var(--discord-glow); transform: translateY(-2px); }
+
+        /* --- HOW TO JOIN --- */
+        .how-to-join { padding: 40px; margin: 20px 0 60px; }
+        .how-to-join-title { text-align: center; font-size: 2rem; font-weight: 800; margin-bottom: 32px; color: #fff; letter-spacing: -0.5px; }
+        .how-to-join-title i { color: var(--accent); margin-right: 12px; }
+        .steps-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 24px; }
+        
+        .step-card { 
+            background: rgba(24, 24, 27, 0.4); border: 1px solid rgba(255, 255, 255, 0.05); 
+            border-radius: 20px; padding: 32px 24px; text-align: center; transition: var(--transition); position: relative; z-index: 1;
+        }
+        .step-card:hover { border-color: rgba(139, 92, 246, 0.3); background: rgba(30, 30, 35, 0.6); transform: translateY(-6px); }
+        .step-icon { 
+            width: 64px; height: 64px; background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.08); 
+            border-radius: 18px; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; font-size: 1.5rem; color: var(--text-main); transition: var(--transition);
+        }
+        .step-card:hover .step-icon { background: rgba(139, 92, 246, 0.15); color: var(--accent); border-color: rgba(139, 92, 246, 0.4); transform: scale(1.08) translateY(-4px); }
+        .step-title { font-size: 1.2rem; font-weight: 600; color: #fff; margin-bottom: 12px; }
+        .step-desc { font-size: 0.9rem; color: var(--text-dim); line-height: 1.6; }
+
+        /* --- CONTROLS & SEARCH --- */
+        .controls-area { display: flex; justify-content: space-between; gap: 24px; margin: 40px 0 32px; align-items: center; flex-wrap: wrap; }
+        .controls-area h2 { font-size: 1.8rem; font-weight: 800; letter-spacing: -0.5px; }
+        .controls-right { display: flex; gap: 16px; flex-grow: 1; justify-content: flex-end; }
+        
+        .search-box { position: relative; flex-grow: 1; max-width: 360px; }
+        .search-input { width: 100%; padding: 14px 44px 14px 20px; background: rgba(24, 24, 27, 0.8); border: 1px solid var(--border-glass); border-radius: 12px; color: white; transition: var(--transition); font-size: 0.95rem; }
+        .search-input:focus { border-color: var(--accent); outline: none; box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.15); }
+        .search-icon { position: absolute; right: 16px; top: 50%; transform: translateY(-50%); color: var(--text-dim); }
+        
+        .btn-add { background: var(--accent); color: white; border: none; padding: 14px 28px; border-radius: 12px; font-weight: 600; font-size: 0.95rem; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: var(--transition); }
+        .btn-add:hover { background: var(--accent-hover); transform: translateY(-2px); box-shadow: 0 4px 12px var(--accent-glow); }
+        .btn-secondary { background: rgba(255,255,255,0.05); border: 1px solid var(--border-glass); }
+        .btn-secondary:hover { background: rgba(255,255,255,0.1); box-shadow: none; }
+
+        /* --- ИНПУТЫ С ИКОНКАМИ --- */
+        .form-group { margin-bottom: 20px; }
+        .form-label { display: block; font-size: 0.85rem; color: var(--text-dim); margin-bottom: 8px; font-weight: 500; }
+        .form-input { width: 100%; background: rgba(0,0,0,0.2); border: 1px solid var(--border-glass); color: #fff; padding: 14px 16px; border-radius: 10px; font-size: 0.95rem; transition: var(--transition); }
+        .form-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.15); }
+        
+        .input-with-icon { position: relative; width: 100%; }
+        .input-with-icon i { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: var(--text-dim); transition: var(--transition); font-size: 1.1rem; }
+        .input-with-icon .form-input { padding-left: 48px; }
+        .input-with-icon:focus-within i { color: var(--accent); }
+
+        /* --- ADMIN NAV & LAYOUT --- */
+        .admin-nav { display: flex; gap: 8px; padding: 12px 24px; margin: 0 auto 32px; justify-content: center; border-radius: 16px; width: max-content; }
+        .post-editor-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+        
+        /* --- SUPPORT LAYOUT --- */
+        .support-layout { display: flex; gap: 24px; height: 600px; margin-top: 24px; }
+        .support-sidebar { width: 320px; display: flex; flex-direction: column; padding: 20px; border-radius: 16px; }
+        .support-chat-area { flex: 1; display: flex; flex-direction: column; padding: 24px; border-radius: 16px; }
+        
+        .ticket-list { overflow-y: auto; display: flex; flex-direction: column; gap: 10px; padding-right: 5px; }
+        .ticket-list::-webkit-scrollbar { width: 6px; }
+        .ticket-list::-webkit-scrollbar-thumb { background: var(--border-glass); border-radius: 4px; }
+        
+        .ticket-item { padding: 16px; background: rgba(255,255,255,0.03); border: 1px solid var(--border-glass); border-radius: 12px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; transition: var(--transition); }
+        .ticket-item:hover { background: rgba(255,255,255,0.08); border-color: rgba(139, 92, 246, 0.5); transform: translateX(4px); }
+        .ticket-item.active { background: rgba(139, 92, 246, 0.15); border-color: rgba(139, 92, 246, 0.5); }
+        
+        .ticket-info { display: flex; flex-direction: column; gap: 6px; }
+        .ticket-subject { font-weight: 600; color: #fff; font-size: 0.95rem; }
+        .ticket-meta { font-size: 0.8rem; color: var(--text-dim); }
+        
+        .ticket-status { font-size: 0.75rem; padding: 4px 10px; border-radius: 6px; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; }
+        .status-open { background: rgba(56, 189, 248, 0.15); color: var(--info-blue); border: 1px solid rgba(56, 189, 248, 0.3); }
+        .status-closed { background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3); }
+
+        .chat-messages { flex: 1; overflow-y: auto; padding: 10px 10px 10px 0; display: flex; flex-direction: column; gap: 12px; }
+        .chat-messages::-webkit-scrollbar { width: 6px; }
+        .chat-messages::-webkit-scrollbar-thumb { background: var(--border-glass); border-radius: 4px; }
+        
+        .message { max-width: 80%; padding: 12px 16px; border-radius: 14px; font-size: 0.95rem; line-height: 1.4; position: relative; }
+        .msg-self { align-self: flex-end; background: var(--accent); color: white; border-bottom-right-radius: 4px; }
+        .msg-other { align-self: flex-start; background: rgba(255,255,255,0.05); color: #fff; border: 1px solid var(--border-glass); border-bottom-left-radius: 4px; }
+        .msg-sender { font-size: 0.75rem; opacity: 0.7; margin-bottom: 6px; display: block; font-weight: 500; }
+        
+        .chat-input-area { display: flex; gap: 10px; margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border-glass); }
+
+        /* --- NEWS & PLAYERS GRID --- */
+        .news-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 24px; }
+        .article-card { display: flex; flex-direction: column; transition: var(--transition); }
+        .article-card:hover { border-color: rgba(139, 92, 246, 0.5); transform: translateY(-6px); box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
+        .card-body { padding: 32px; display: flex; flex-direction: column; height: 100%; }
+        .card-tag { font-size: 0.75rem; font-weight: 700; color: var(--accent); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; background: rgba(139, 92, 246, 0.1); display: inline-block; padding: 4px 10px; border-radius: 6px; }
+        .card-title { font-size: 1.4rem; font-weight: 700; margin-bottom: 16px; color: #fff; letter-spacing: -0.5px; line-height: 1.3; }
+        .card-text { font-size: 0.95rem; color: var(--text-dim); flex-grow: 1; white-space: pre-wrap; }
+        .card-footer { margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--border-glass); font-size: 0.8rem; color: #71717a; display: flex; justify-content: space-between; align-items: center; font-weight: 500; }
+
+        .player-card { display: flex; align-items: center; gap: 16px; padding: 20px; transition: var(--transition); cursor: pointer; }
+        .player-card:hover { border-color: rgba(139, 92, 246, 0.5); transform: translateY(-4px); box-shadow: 0 10px 30px rgba(0,0,0,0.2); background: rgba(255,255,255,0.03); }
+        .player-avatar { width: 60px; height: 60px; border-radius: 12px; background: rgba(24, 24, 27, 0.8); background-size: cover; background-position: center; border: 1px solid var(--border-glass); display: flex; align-items: center; justify-content: center; font-size: 1.5rem; color: var(--accent); }
+        .player-info { flex: 1; }
+        .player-name { font-weight: 700; font-size: 1.1rem; color: #fff; margin-bottom: 4px; }
+        .player-status { font-size: 0.85rem; color: var(--text-dim); }
+
+        /* --- PROFILE OVERLAYS --- */
+        .profile-header-overlay { position: absolute; bottom: -50px; left: 40px; display: flex; align-items: flex-end; gap: 24px; }
+        .profile-actions-overlay { position: absolute; bottom: 20px; right: 40px; display: flex; gap: 12px; }
+        .profile-content-pad { padding: 70px 40px 40px; }
+
+        /* --- FOOTER & MODALS --- */
+        footer { margin-top: auto; border-top: 1px solid var(--border-glass); padding: 30px 0; background: rgba(9, 9, 11, 0.8); backdrop-filter: blur(10px); }
+        .footer-content { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px; padding: 0 24px; max-width: 1200px; margin: 0 auto; }
+        .social-links { display: flex; gap: 15px; }
+        .social-link { width: 40px; height: 40px; border-radius: 50%; background: rgba(255, 255, 255, 0.05); display: flex; align-items: center; justify-content: center; color: var(--text-dim); text-decoration: none; transition: var(--transition); border: 1px solid var(--border-glass); }
+        .social-link:hover { color: #fff; transform: translateY(-3px); border-color: var(--accent); background: rgba(139, 92, 246, 0.2); }
+
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); backdrop-filter: blur(8px); display: none; align-items: center; justify-content: center; z-index: 1000; opacity: 0; transition: opacity 0.3s ease; }
+        .modal-overlay.show { display: flex; opacity: 1; }
+        .modal-box { width: 100%; max-width: 420px; padding: 40px; transform: translateY(20px); transition: transform 0.3s ease; }
+        .modal-overlay.show .modal-box { transform: translateY(0); }
+        .modal-box h3 { font-size: 1.5rem; font-weight: 700; margin-bottom: 24px; text-align: center; }
+        .hidden { display: none !important; }
+        .error-msg { color: #ef4444; font-size: 0.85rem; margin-top: -10px; margin-bottom: 16px; display: none; text-align: center; background: rgba(239,68,68,0.1); padding: 8px; border-radius: 6px; }
+
+        /* --- TOAST NOTIFICATIONS --- */
+        .toast-notification { position: fixed; top: 20px; right: 20px; z-index: 9999; padding: 16px 24px; display: flex; align-items: center; gap: 12px; font-weight: 500; animation: slideInRight 0.3s ease forwards; border-left: 4px solid #4ade80; color: #fff; }
+        @keyframes slideInRight { from { transform: translateX(100px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+
+        @media (max-width: 768px) {
+            .post-editor-layout { grid-template-columns: 1fr; }
+            .support-layout { flex-direction: column; height: auto; }
+            .support-sidebar { width: 100%; height: 350px; }
+            .support-chat-area { height: 450px; }
+            .admin-nav { flex-direction: column; width: 100%; }
+            .profile-header-overlay { left: 20px; bottom: -40px; gap: 16px; }
+            #profileAvatar { width: 100px !important; height: 100px !important; }
+            #profileName { font-size: 1.6rem !important; }
+            .profile-actions-overlay { bottom: auto; top: 16px; right: 16px; }
+            .profile-content-pad { padding: 60px 20px 20px; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="container" style="padding: 0;">
+            <nav class="glass nav-bar fade-in">
+                <div class="logo" id="siteLogo">VANILLA<span>S</span></div>
+                <div class="nav-tabs" id="mainNav">
+                    <a class="nav-tab active" data-target="home" onclick="switchMainView('home')"><i class="fa-solid fa-house"></i> Главная</a>
+                    <a class="nav-tab" data-target="rules" onclick="switchMainView('rules')"><i class="fa-solid fa-scroll"></i> Правила</a>
+                    <a class="nav-tab" data-target="donate" onclick="switchMainView('donate')"><i class="fa-solid fa-gem"></i> Донат</a>
+                    <a class="nav-tab" data-target="players" onclick="switchMainView('players')"><i class="fa-solid fa-users"></i> Игроки</a>
+                    
+                    <a class="nav-tab hidden" id="supportBtn" data-target="support" onclick="switchMainView('support')"><i class="fa-solid fa-headset"></i> Поддержка</a>
+                    <a class="nav-tab hidden" id="adminBtn" data-target="admin" onclick="switchMainView('admin')"><i class="fa-solid fa-shield-halved"></i> Админ-панель</a>
+                    
+                    <div class="user-block" id="authBlock">
+                        <a class="nav-tab" onclick="openModal('loginModal')"><i class="fa-solid fa-right-to-bracket"></i> Войти</a>
+                        <a class="nav-tab" onclick="openModal('registerModal')"><i class="fa-solid fa-user-plus"></i> Регистрация</a>
+                    </div>
+                    
+                    <div class="user-block hidden" id="profileBlock">
+                        <a class="nav-tab" id="myProfileBtn" data-target="profile" onclick="if(currentUser) openProfile(currentUser.username)">
+                            <i class="fa-solid fa-user"></i> <span id="usernameDisplay">User</span>
+                        </a>
+                        <a class="nav-tab" onclick="logout()"><i class="fa-solid fa-right-from-bracket"></i> Выйти</a>
+                    </div>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        
+        <!-- ================= VIEW: ГЛАВНАЯ ================= -->
+        <div id="view-home" class="view-section active">
+            <section class="hero fade-in delay-1">
+                <h1 id="siteMainTitle">VANILLAS</h1>
+                <p id="siteDesc">Чистое выживание без границ и лишних плагинов</p>
+                <div class="badges-container">
+                    <div class="badge-btn ip-badge" onclick="copyIP()">
+                        <i class="fa-solid fa-plug"></i> <span id="ip-text">pl1.hoxen.one:25518</span> <i class="fa-regular fa-copy" style="font-size: 0.85rem; opacity: 0.7;"></i>
+                    </div>
+                    <a href="https://discord.gg/SPztB9EAxE" target="_blank" class="badge-btn discord-badge">
+                        <i class="fa-brands fa-discord"></i> <span>Discord Сервер</span>
+                    </a>
+                </div>
+            </section>
+
+            <div class="glass how-to-join fade-in delay-2">
+                <h2 class="how-to-join-title"><i class="fa-solid fa-gamepad"></i>Как зайти на сервер</h2>
+                <div class="steps-grid">
+                    <div class="step-card">
+                        <div class="step-icon"><i class="fa-solid fa-pen-to-square"></i></div>
+                        <div class="step-title">1. Заполните анкету</div>
+                        <div class="step-desc">Оставьте заявку в Discord канале.<br><br><span style="color: var(--info-blue); font-weight: 600;">Без анкеты вход запрещён</span></div>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-icon"><i class="fa-solid fa-hourglass-half"></i></div>
+                        <div class="step-title">2. Дождитесь принятия</div>
+                        <div class="step-desc">Ожидайте, пока администрация рассмотрит вашу заявку и добавит вас в WhiteList.</div>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-icon"><i class="fa-solid fa-book"></i></div>
+                        <div class="step-title">3. Изучите правила</div>
+                        <div class="step-desc">Прочитайте правила в Discord.<br><br><span style="color: var(--info-blue); font-weight: 600;">Незнание не освобождает от наказания</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="controls-area fade-in delay-3">
+                <h2>События мира</h2>
+                <div class="controls-right">
+                    <div class="search-box">
+                        <input type="text" id="searchInput" class="search-input" placeholder="Поиск новостей...">
+                        <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                    </div>
+                    <button id="addPostBtn" class="btn-add hidden" onclick="switchMainView('admin'); switchAdminTab('create-post');">
+                        <i class="fa-solid fa-plus"></i> Создать пост
+                    </button>
+                </div>
+            </div>
+            
+            <div class="news-grid fade-in delay-3" id="newsGrid"></div>
+        </div>
+
+        <!-- ================= VIEW: ПРАВИЛА ================= -->
+        <div id="view-rules" class="view-section">
+            <div class="controls-area" style="margin-top: 0; margin-bottom: 24px;"><h2>Свод правил</h2></div>
+            <div class="glass" style="padding: 60px; text-align: center;">
+                <i class="fa-solid fa-scale-balanced" style="font-size: 3rem; color: var(--accent); margin-bottom: 20px;"></i>
+                <h3 style="font-size: 1.5rem; margin-bottom: 10px;">Правила проекта</h3>
+                <p style="color: var(--text-dim);">Раздел находится в разработке. Все основные правила описаны в нашем Discord сервере.</p>
+            </div>
+        </div>
+
+        <!-- ================= VIEW: ДОНАТ ================= -->
+        <div id="view-donate" class="view-section">
+            <div class="controls-area" style="margin-top: 0; margin-bottom: 24px;"><h2>Поддержка проекта</h2></div>
+            <div class="glass" style="padding: 60px; text-align: center;">
+                <i class="fa-solid fa-store" style="font-size: 3rem; color: var(--accent); margin-bottom: 20px;"></i>
+                <h3 style="font-size: 1.5rem; margin-bottom: 10px;">Магазин привилегий</h3>
+                <p style="color: var(--text-dim);">У нас нет доната, влияющего на игровой процесс. Здесь скоро появится косметический магазин.</p>
+            </div>
+        </div>
+
+        <!-- ================= VIEW: ИГРОКИ (СПИСОК) ================= -->
+        <div id="view-players" class="view-section">
+            <div class="controls-area" style="margin-top: 0; margin-bottom: 24px;">
+                <h2>Игроки сервера</h2>
+                <div class="search-box">
+                    <input type="text" id="playerSearchInput" class="search-input" placeholder="Поиск игроков..." oninput="renderPlayers()">
+                    <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                </div>
+            </div>
+            <div class="news-grid" id="playersGrid"></div>
+        </div>
+
+        <!-- ================= VIEW: ПРОФИЛЬ ПОЛЬЗОВАТЕЛЯ ================= -->
+        <div id="view-profile" class="view-section">
+            <div class="glass admin-nav" id="profileNav">
+                <a class="nav-tab active" data-target="profile-overview" onclick="switchProfileTab('profile-overview')"><i class="fa-solid fa-address-card"></i> Обзор</a>
+                <a class="nav-tab" data-target="profile-friends" onclick="switchProfileTab('profile-friends')"><i class="fa-solid fa-user-group"></i> Друзья</a>
+                <a class="nav-tab hidden" id="profileSettingsTab" data-target="profile-settings" onclick="switchProfileTab('profile-settings')"><i class="fa-solid fa-gear"></i> Настройки</a>
+            </div>
+
+            <div class="glass" style="overflow: hidden; position: relative;">
+                <!-- БАННЕР И АВАТАРКА -->
+                <div id="profileBanner" style="height: 250px; background: linear-gradient(135deg, rgba(139, 92, 246, 0.2) 0%, rgba(24, 24, 27, 0.8) 100%); background-size: cover; background-position: center; position: relative; border-bottom: 1px solid var(--border-glass);">
+                    <div class="profile-header-overlay">
+                        <div id="profileAvatar" style="width: 140px; height: 140px; border-radius: 20px; background: rgba(24, 24, 27, 1); background-size: cover; background-position: center; border: 4px solid var(--bg-glass); box-shadow: 0 8px 24px rgba(0,0,0,0.4); display: flex; justify-content: center; align-items: center; font-size: 3rem; color: var(--accent);">
+                            <i class="fa-solid fa-user"></i>
+                        </div>
+                        <div style="margin-bottom: 12px; text-shadow: 0 2px 8px rgba(0,0,0,0.8);">
+                            <h2 id="profileName" style="font-size: 2.2rem; font-weight: 800; color: #fff; line-height: 1; margin-bottom: 8px;">User</h2>
+                            <div id="profileRoleBadge"></div>
+                        </div>
+                    </div>
+                    
+                    <div id="profileActions" class="profile-actions-overlay"></div>
+                </div>
+
+                <div class="profile-content-pad">
+                    <!-- СЕКЦИИ ПРОФИЛЯ -->
+                    <div id="profile-profile-overview" class="admin-section active">
+                        <h3 style="margin-bottom: 16px; font-size: 1.3rem;">О себе</h3>
+                        <div class="glass" style="padding: 24px; background: rgba(0,0,0,0.2); border-color: var(--border-glass);">
+                            <p id="profileAbout" style="color: var(--text-dim); white-space: pre-wrap; font-size: 0.95rem; line-height: 1.6;">Пользователь пока ничего не рассказал о себе.</p>
+                        </div>
+                    </div>
+
+                    <div id="profile-profile-friends" class="admin-section">
+                        <h3 style="margin-bottom: 24px; font-size: 1.3rem;">Список друзей</h3>
+                        <div class="news-grid" id="profileFriendsList"></div>
+                    </div>
+
+                    <div id="profile-profile-settings" class="admin-section">
+                        <h3 style="margin-bottom: 24px; font-size: 1.3rem;">Настройки профиля</h3>
+                        <div class="post-editor-layout">
+                            <div class="form-group">
+                                <label class="form-label">Аватарка (Загрузить с ПК)</label>
+                                <div class="input-with-icon">
+                                    <i class="fa-solid fa-file-image"></i>
+                                    <input type="file" id="avatarFileInp" class="form-input" accept="image/*" style="padding-top: 11px;">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Ссылка на Баннер (URL)</label>
+                                <div class="input-with-icon">
+                                    <i class="fa-solid fa-image"></i>
+                                    <input type="text" id="bannerUrlInp" class="form-input" placeholder="https://i.imgur.com/...">
+                                </div>
+                            </div>
+                            <div class="form-group" style="grid-column: 1 / -1;">
+                                <label class="form-label">О себе</label>
+                                <textarea id="aboutInp" class="form-input" style="height: 120px; padding: 16px; resize: vertical;" placeholder="Расскажите о себе..."></textarea>
+                            </div>
+                        </div>
+                        <button class="btn-add" onclick="saveProfileSettings()" style="margin-top: 16px;"><i class="fa-solid fa-floppy-disk"></i> Сохранить изменения</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= VIEW: ПОДДЕРЖКА (ИГРОКИ) ================= -->
+        <div id="view-support" class="view-section">
+            <div class="controls-area" style="margin-top: 0; margin-bottom: 16px;">
+                <h2><i class="fa-solid fa-headset" style="color: var(--accent); margin-right: 12px;"></i>Служба поддержки</h2>
+            </div>
+            
+            <div class="support-layout">
+                <div class="glass support-sidebar">
+                    <h3 style="margin-bottom: 16px; font-size: 1.1rem;">Мои обращения</h3>
+                    <button class="btn-add" style="width: 100%; justify-content: center; margin-bottom: 16px;" onclick="openModal('newTicketModal')">
+                        <i class="fa-solid fa-plus"></i> Создать тикет
+                    </button>
+                    <div class="ticket-list" id="userTicketsContainer" style="flex: 1;"></div>
+                </div>
+                
+                <div class="glass support-chat-area">
+                    <div id="supportEmptyState" style="margin: auto; text-align: center; color: var(--text-dim);">
+                        <i class="fa-regular fa-comments" style="font-size: 3rem; margin-bottom: 16px; opacity: 0.5;"></i>
+                        <p>Выберите тикет из списка слева<br>или создайте новое обращение.</p>
+                    </div>
+                    
+                    <div id="supportActiveChat" class="hidden" style="display: flex; flex-direction: column; height: 100%;">
+                        <div style="border-bottom: 1px solid var(--border-glass); padding-bottom: 16px; margin-bottom: 16px; display: flex; justify-content: space-between; align-items: center;">
+                            <h3 id="supportChatTitle" style="font-size: 1.2rem;">Тема: ...</h3>
+                            <span id="supportChatStatus" class="ticket-status">Открыт</span>
+                        </div>
+                        <div class="chat-messages" id="supportChatMessages"></div>
+                        <div class="chat-input-area" id="supportChatInputArea">
+                            <input type="text" id="supportChatInput" class="form-input" placeholder="Введите сообщение..." onkeypress="handleSupportEnter(event)">
+                            <button class="btn-add" onclick="sendSupportMessage()"><i class="fa-solid fa-paper-plane"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= VIEW: АДМИН-ПАНЕЛЬ ================= -->
+        <div id="view-admin" class="view-section">
+            <div class="glass admin-nav" id="adminNav">
+                <a class="nav-tab active" data-target="settings" onclick="switchAdminTab('settings')"><i class="fa-solid fa-sliders"></i> Основные настройки</a>
+                <a class="nav-tab" data-target="create-post" onclick="switchAdminTab('create-post')"><i class="fa-solid fa-pen-nib"></i> Создать новость</a>
+                <a class="nav-tab" data-target="manage-tickets" onclick="switchAdminTab('manage-tickets')"><i class="fa-solid fa-inbox"></i> Запросы игроков</a>
+                <a class="nav-tab" data-target="manage-roles" onclick="switchAdminTab('manage-roles')"><i class="fa-solid fa-user-tag"></i> Роли</a>
+            </div>
+
+            <div class="glass" style="padding: 40px;">
+                <div id="admin-settings" class="admin-section active">
+                    <h3 style="margin-bottom: 24px; font-size: 1.3rem;">Управление главной страницей</h3>
+                    <div class="form-group" style="max-width: 500px;">
+                        <label class="form-label">Главный заголовок</label>
+                        <div class="input-with-icon">
+                            <i class="fa-solid fa-heading"></i>
+                            <input type="text" id="siteTitleInp" class="form-input" placeholder="Например: VANILLAS">
+                        </div>
+                    </div>
+                    <div class="form-group" style="max-width: 500px;">
+                        <label class="form-label">Описание под заголовком</label>
+                        <div class="input-with-icon">
+                            <i class="fa-solid fa-align-left"></i>
+                            <input type="text" id="siteDescInp" class="form-input" placeholder="Описание сервера">
+                        </div>
+                    </div>
+                    <button class="btn-add" onclick="saveSiteSettings()" style="margin-top: 16px;"><i class="fa-solid fa-floppy-disk"></i> Сохранить изменения</button>
+                </div>
+
+                <div id="admin-create-post" class="admin-section">
+                    <h3 style="margin-bottom: 24px; font-size: 1.3rem;">Публикация новостей</h3>
+                    <div class="post-editor-layout">
+                        <div class="form-group">
+                            <label class="form-label">Заголовок новости</label>
+                            <div class="input-with-icon">
+                                <i class="fa-solid fa-bolt"></i>
+                                <input type="text" id="titleInp" class="form-input" placeholder="Введите яркий заголовок...">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Тег / Категория</label>
+                            <div class="input-with-icon">
+                                <i class="fa-solid fa-tag"></i>
+                                <input type="text" id="tagInp" class="form-input" placeholder="ОБНОВЛЕНИЕ, ВАЙП, ИВЕНТ...">
+                            </div>
+                        </div>
+                        <div class="form-group" style="grid-column: 1 / -1;">
+                            <label class="form-label">Текст новости</label>
+                            <textarea id="textInp" class="form-input" style="height: 180px; padding: 16px; resize: vertical;" placeholder="Подробно опишите событие..."></textarea>
+                        </div>
+                    </div>
+                    <button class="btn-add" onclick="savePost()" style="margin-top: 16px; padding: 16px 32px;"><i class="fa-solid fa-bullhorn"></i> Опубликовать на главной</button>
+                </div>
+
+                <!-- УПРАВЛЕНИЕ РОЛЯМИ ДЛЯ RESHT1 -->
+                <div id="admin-manage-roles" class="admin-section">
+                    <h3 style="margin-bottom: 24px; font-size: 1.3rem;">Создание новой роли</h3>
+                    <div class="post-editor-layout">
+                        <div class="form-group">
+                            <label class="form-label">Название роли</label>
+                            <input type="text" id="roleNameInp" class="form-input" placeholder="VIP, Модератор...">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Цвет роли (HEX)</label>
+                            <input type="color" id="roleColorInp" class="form-input" value="#8b5cf6" style="height: 50px; padding: 5px; cursor: pointer;">
+                        </div>
+                        <div class="form-group" style="grid-column: 1 / -1;">
+                            <label class="form-label">Иконка FontAwesome (классы)</label>
+                            <input type="text" id="roleIconInp" class="form-input" placeholder="fa-star">
+                            <small style="color:var(--text-dim); display:block; margin-top:6px;">Популярные: fa-star, fa-crown, fa-shield, fa-bolt, fa-gem</small>
+                        </div>
+                    </div>
+                    <button class="btn-add" onclick="createRole()" style="margin-top: 16px;"><i class="fa-solid fa-plus"></i> Создать роль</button>
+                    
+                    <h3 style="margin-top: 40px; margin-bottom: 24px; font-size: 1.3rem;">Выдача ролей игрокам</h3>
+                    <div class="post-editor-layout">
+                        <div class="form-group">
+                            <label class="form-label">Выберите игрока</label>
+                            <select id="roleUserSelect" class="form-input"></select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Выберите роль</label>
+                            <select id="roleSelect" class="form-input"></select>
+                        </div>
+                    </div>
+                    <button class="btn-add" onclick="assignRole()" style="margin-top: 16px;"><i class="fa-solid fa-user-tag"></i> Выдать роль игроку</button>
+
+                    <h3 style="margin-top: 40px; margin-bottom: 16px; font-size: 1.3rem;">Список созданных ролей</h3>
+                    <div id="rolesListContainer" style="display: flex; gap: 12px; flex-wrap: wrap;"></div>
+                </div>
+
+                <div id="admin-manage-tickets" class="admin-section">
+                    <h3 style="margin-bottom: 24px; font-size: 1.3rem;">Панель службы поддержки</h3>
+                    <div class="support-layout" style="height: 500px; margin-top: 0;">
+                        <div class="support-sidebar" style="background: rgba(0,0,0,0.2); border: 1px solid var(--border-glass);">
+                            <div class="ticket-list" id="adminTicketsContainer" style="flex: 1;"></div>
+                        </div>
+                        <div class="support-chat-area" style="background: rgba(0,0,0,0.2); border: 1px solid var(--border-glass);">
+                            <div id="adminSupportEmptyState" style="margin: auto; text-align: center; color: var(--text-dim);">
+                                <p>Выберите тикет игрока для ответа.</p>
+                            </div>
+                            <div id="adminSupportActiveChat" class="hidden" style="display: flex; flex-direction: column; height: 100%;">
+                                <div style="border-bottom: 1px solid var(--border-glass); padding-bottom: 12px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center;">
+                                    <div>
+                                        <h4 id="adminChatTitle" style="margin-bottom: 4px; font-size: 1.1rem;">...</h4>
+                                        <span style="font-size: 0.8rem; color: var(--text-dim);" id="adminChatAuthor">От: ...</span>
+                                    </div>
+                                    <div style="display: flex; gap: 10px; align-items: center;">
+                                        <span id="adminChatStatus" class="ticket-status"></span>
+                                        <button class="btn-secondary" id="adminCloseTicketBtn" onclick="closeActiveTicket()" style="padding: 6px 12px; border-radius: 8px; font-size: 0.8rem; color: #f87171; border-color: rgba(239, 68, 68, 0.3); cursor: pointer;"><i class="fa-solid fa-lock" style="margin-right: 4px;"></i>Закрыть</button>
+                                    </div>
+                                </div>
+                                <div class="chat-messages" id="adminChatMessages"></div>
+                                <div class="chat-input-area" id="adminChatInputArea">
+                                    <input type="text" id="adminChatInput" class="form-input" placeholder="Ответ администратора..." onkeypress="handleAdminSupportEnter(event)">
+                                    <button class="btn-add" onclick="sendAdminSupportMessage()"><i class="fa-solid fa-reply"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div style="color: var(--text-dim); font-size: 0.9rem;">
+                © 2024 VANILLAS. Все права защищены.<br>
+                <span style="font-size: 0.8rem; color: #71717a;">Не связан с Mojang AB.</span>
+            </div>
+            <div class="social-links">
+                <a href="#" target="_blank" class="social-link" title="ВКонтакте"><i class="fa-brands fa-vk"></i></a>
+                <a href="#" target="_blank" class="social-link" title="Telegram"><i class="fa-brands fa-telegram"></i></a>
+                <a href="https://discord.gg/SPztB9EAxE" target="_blank" class="social-link" title="Discord"><i class="fa-brands fa-discord"></i></a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- МОДАЛКИ -->
+    <div class="modal-overlay" id="newTicketModal">
+        <div class="glass modal-box">
+            <h3>Новое обращение</h3>
+            <div class="form-group">
+                <label class="form-label">Краткая суть проблемы</label>
+                <div class="input-with-icon">
+                    <i class="fa-solid fa-circle-exclamation"></i>
+                    <input type="text" id="newTicketSubject" class="form-input" placeholder="Например: Пропали вещи">
+                </div>
+            </div>
+            <div style="display: flex; gap: 12px; margin-top: 24px;">
+                <button class="btn-add" style="flex: 1; justify-content: center;" onclick="createNewTicket()"><i class="fa-solid fa-paper-plane"></i> Создать</button>
+                <button class="btn-add btn-secondary" style="flex: 1; justify-content: center;" onclick="closeModals()">Отмена</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="loginModal">
+        <div class="glass modal-box">
+            <h3>С возвращением</h3>
+            <div id="loginError" class="error-msg">Неверный логин или пароль</div>
+            <div class="form-group">
+                <label class="form-label">Логин</label>
+                <div class="input-with-icon">
+                    <i class="fa-solid fa-user"></i>
+                    <input type="text" id="loginUsername" class="form-input" placeholder="Введите ваш ник">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Пароль</label>
+                <div class="input-with-icon">
+                    <i class="fa-solid fa-lock"></i>
+                    <input type="password" id="loginPassword" class="form-input" placeholder="••••••••">
+                </div>
+            </div>
+            <div style="display: flex; gap: 12px; margin-top: 24px;">
+                <button class="btn-add" style="flex: 1; justify-content: center;" onclick="login()">Войти</button>
+                <button class="btn-add btn-secondary" style="flex: 1; justify-content: center;" onclick="closeModals()">Отмена</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="registerModal">
+        <div class="glass modal-box">
+            <h3>Регистрация</h3>
+            <div id="regError" class="error-msg">Пользователь уже существует</div>
+            <div class="form-group">
+                <label class="form-label">Придумайте логин</label>
+                <div class="input-with-icon">
+                    <i class="fa-solid fa-user-plus"></i>
+                    <input type="text" id="regUsername" class="form-input" placeholder="Никнейм в игре">
+                </div>
+                <small style="color:var(--text-dim); display:block; margin-top:4px; font-size:0.75rem;">Мин. 5 символов, не только из цифр</small>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Придумайте пароль</label>
+                <div class="input-with-icon">
+                    <i class="fa-solid fa-key"></i>
+                    <input type="password" id="regPassword" class="form-input" placeholder="Надежный пароль">
+                </div>
+                <small style="color:var(--text-dim); display:block; margin-top:4px; font-size:0.75rem;">Мин. 8 символов, нужны буквы и цифры</small>
+            </div>
+            <div style="display: flex; gap: 12px; margin-top: 24px;">
+                <button class="btn-add" style="flex: 1; justify-content: center;" onclick="register()">Создать аккаунт</button>
+                <button class="btn-add btn-secondary" style="flex: 1; justify-content: center;" onclick="closeModals()">Отмена</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- БАЗОВЫЕ ДАННЫЕ ---
+        let users = JSON.parse(localStorage.getItem('vanillas_users')) || [];
+        let roles = JSON.parse(localStorage.getItem('vanillas_roles')) || [];
+        let posts = JSON.parse(localStorage.getItem('vanillas_posts')) || [
+            { title: "Запуск нового сезона", tag: "СОБЫТИЕ", text: "Мир VANILLAS открыт! Ждем всех на спавне для начала великого путешествия.", author: "resht1" }
+        ];
+        let siteSettings = JSON.parse(localStorage.getItem('vanillas_settings')) || {
+            title: "VANILLAS", description: "Чистое выживание без границ и лишних плагинов"
+        };
+        let currentUser = JSON.parse(localStorage.getItem('vanillas_currentUser')) || null;
+        let tickets = JSON.parse(localStorage.getItem('vanillas_tickets')) || [];
+        
+        let activeTicketId = null;
+        let currentViewProfileUser = null;
+
+        function saveUsers() {
+            localStorage.setItem('vanillas_users', JSON.stringify(users));
+            if (currentUser) {
+                // Синхронизация данных для текущей сессии
+                const updatedCurrentUser = users.find(u => u.username === currentUser.username);
+                if(updatedCurrentUser) currentUser = updatedCurrentUser;
+                localStorage.setItem('vanillas_currentUser', JSON.stringify(currentUser));
+            }
+        }
+        function saveRoles() { localStorage.setItem('vanillas_roles', JSON.stringify(roles)); }
+
+        // --- УВЕДОМЛЕНИЯ (ТОСТЫ) ---
+        function showToast(message) {
+            const toast = document.createElement('div');
+            toast.className = 'glass toast-notification';
+            toast.innerHTML = `<i class="fa-solid fa-circle-check"></i> ${message}`;
+            document.body.appendChild(toast);
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateY(-20px)';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        // --- УТИЛИТА: ОТОБРАЖЕНИЕ РОЛЕЙ ---
+        function getUserRoleHTML(u) {
+            if (!u) return '';
+            if (u.username === 'resht1') {
+                return `<span style="color: #ef4444; font-weight: 600;"><i class="fa-solid fa-crown"></i> Создатель</span>`;
+            }
+            if (u.roleId) {
+                const r = roles.find(ro => ro.id === u.roleId);
+                if (r) {
+                    return `<span style="color: ${r.color}; font-weight: 600;"><i class="fa-solid ${r.icon}"></i> ${r.name}</span>`;
+                }
+            }
+            return `<span style="color: var(--text-dim);"><i class="fa-solid fa-user"></i> Игрок сервера</span>`;
+        }
+
+        function getProfileBadgeRoleHTML(u) {
+            if (!u) return '';
+            if (u.username === 'resht1') {
+                return `<span style="color: #fff; font-weight: 600; font-size: 0.95rem; background: rgba(239, 68, 68, 0.6); padding: 4px 10px; border-radius: 6px; backdrop-filter: blur(4px); border: 1px solid #ef4444;"><i class="fa-solid fa-crown"></i> Создатель</span>`;
+            }
+            if (u.roleId) {
+                const r = roles.find(ro => ro.id === u.roleId);
+                if (r) {
+                    return `<span style="color: ${r.color}; font-weight: 600; font-size: 0.95rem; background: rgba(0,0,0,0.6); padding: 4px 10px; border-radius: 6px; backdrop-filter: blur(4px); border: 1px solid ${r.color};"><i class="fa-solid ${r.icon}"></i> ${r.name}</span>`;
+                }
+            }
+            return `<span style="color: rgba(255,255,255,0.8); font-weight: 500; font-size: 0.95rem; background: rgba(0,0,0,0.5); padding: 4px 10px; border-radius: 6px; backdrop-filter: blur(4px);"><i class="fa-solid fa-user"></i> Игрок сервера</span>`;
+        }
+
+        // --- НАВИГАЦИЯ (SPA) ---
+        function switchMainView(viewId) {
+            document.querySelectorAll('.view-section').forEach(el => el.classList.remove('active'));
+            document.getElementById('view-' + viewId).classList.add('active');
+            
+            document.querySelectorAll('#mainNav .nav-tab').forEach(el => el.classList.remove('active'));
+            const activeTab = document.querySelector(`#mainNav .nav-tab[data-target="${viewId}"]`);
+            if(activeTab) activeTab.classList.add('active');
+            
+            const myProfileBtn = document.getElementById('myProfileBtn');
+            if (viewId === 'profile' && currentViewProfileUser && currentUser && currentViewProfileUser.username === currentUser.username) {
+                myProfileBtn.classList.add('active');
+            } else {
+                myProfileBtn.classList.remove('active');
+            }
+            
+            if(viewId === 'support') { activeTicketId = null; document.getElementById('supportActiveChat').classList.add('hidden'); document.getElementById('supportEmptyState').classList.remove('hidden'); renderUserTickets(); }
+            if(viewId === 'admin') { activeTicketId = null; document.getElementById('adminSupportActiveChat').classList.add('hidden'); document.getElementById('adminSupportEmptyState').classList.remove('hidden'); renderAdminTickets(); switchAdminTab('settings'); }
+            if(viewId === 'players') { renderPlayers(); }
+        }
+
+        function switchAdminTab(tabId) {
+            document.querySelectorAll('.admin-section').forEach(el => el.classList.remove('active'));
+            document.getElementById('admin-' + tabId).classList.add('active');
+            
+            document.querySelectorAll('#adminNav .nav-tab').forEach(el => el.classList.remove('active'));
+            document.querySelector(`#adminNav .nav-tab[data-target="${tabId}"]`).classList.add('active');
+
+            if(tabId === 'manage-roles') renderRolesAdmin();
+        }
+
+        function switchProfileTab(tabId) {
+            document.querySelectorAll('#view-profile .admin-section').forEach(el => el.classList.remove('active'));
+            document.getElementById('profile-' + tabId).classList.add('active');
+            
+            document.querySelectorAll('#profileNav .nav-tab').forEach(el => el.classList.remove('active'));
+            document.querySelector(`#profileNav .nav-tab[data-target="${tabId}"]`).classList.add('active');
+        }
+
+        // --- ОБНОВЛЕНИЕ ИНТЕРФЕЙСА ---
+        function updateUI() {
+            document.getElementById('siteMainTitle').innerText = siteSettings.title;
+            document.getElementById('siteDesc').innerText = siteSettings.description;
+            document.getElementById('siteTitleInp').value = siteSettings.title;
+            document.getElementById('siteDescInp').value = siteSettings.description;
+            
+            const authBlock = document.getElementById('authBlock');
+            const profileBlock = document.getElementById('profileBlock');
+            const adminBtn = document.getElementById('adminBtn');
+            const supportBtn = document.getElementById('supportBtn');
+            const addPostBtn = document.getElementById('addPostBtn');
+
+            if (currentUser) {
+                authBlock.classList.add('hidden');
+                profileBlock.classList.remove('hidden');
+                document.getElementById('usernameDisplay').innerText = currentUser.username;
+                
+                if (currentUser.username === 'resht1') {
+                    adminBtn.classList.remove('hidden');
+                    supportBtn.classList.add('hidden');
+                    addPostBtn.classList.remove('hidden');
+                } else {
+                    adminBtn.classList.add('hidden');
+                    supportBtn.classList.remove('hidden');
+                    addPostBtn.classList.add('hidden');
+                }
+            } else {
+                authBlock.classList.remove('hidden');
+                profileBlock.classList.add('hidden');
+                supportBtn.classList.add('hidden');
+                adminBtn.classList.add('hidden');
+                addPostBtn.classList.add('hidden');
+                
+                const activeSection = document.querySelector('.view-section.active');
+                if (activeSection && ['view-admin', 'view-support', 'view-profile'].includes(activeSection.id)) {
+                    switchMainView('home'); 
+                }
+            }
+            renderPosts();
+        }
+
+        // --- РОЛИ И АДМИНКА ---
+        function createRole() {
+            const name = document.getElementById('roleNameInp').value.trim();
+            const color = document.getElementById('roleColorInp').value;
+            const icon = document.getElementById('roleIconInp').value.trim() || 'fa-user';
+
+            if (!name) return;
+            roles.push({ id: Date.now().toString(), name, color, icon });
+            saveRoles();
+            showToast("Роль успешно создана!");
+            document.getElementById('roleNameInp').value = '';
+            document.getElementById('roleIconInp').value = '';
+            renderRolesAdmin();
+        }
+
+        function assignRole() {
+            const username = document.getElementById('roleUserSelect').value;
+            const roleId = document.getElementById('roleSelect').value;
+            if (!username) return;
+
+            const userIndex = users.findIndex(u => u.username === username);
+            if (userIndex !== -1) {
+                users[userIndex].roleId = roleId === 'none' ? null : roleId;
+                saveUsers();
+                showToast(`Роль выдана игроку ${username}!`);
+            }
+        }
+
+        function deleteRole(id) {
+            if(confirm("Удалить эту роль навсегда? У всех игроков она пропадет.")) {
+                roles = roles.filter(r => r.id !== id);
+                users.forEach(u => { if(u.roleId === id) u.roleId = null; });
+                saveRoles(); saveUsers();
+                renderRolesAdmin(); showToast("Роль удалена!");
+            }
+        }
+
+        function renderRolesAdmin() {
+            const userSel = document.getElementById('roleUserSelect');
+            const roleSel = document.getElementById('roleSelect');
+            const list = document.getElementById('rolesListContainer');
+
+            if(userSel) userSel.innerHTML = users.map(u => `<option value="${u.username}">${u.username}</option>`).join('');
+            if(roleSel) {
+                roleSel.innerHTML = `<option value="none">Без роли (Сбросить)</option>` + 
+                                    roles.map(r => `<option value="${r.id}">${r.name}</option>`).join('');
+            }
+            if(list) {
+                if(roles.length === 0) { list.innerHTML = `<span style="color:var(--text-dim);">У вас пока не создано ни одной кастомной роли.</span>`; }
+                else {
+                    list.innerHTML = roles.map(r => `
+                        <div style="padding: 8px 16px; border-radius: 8px; border: 1px solid ${r.color}; color: ${r.color}; background: rgba(0,0,0,0.3); display:flex; align-items:center; gap:10px;">
+                            <i class="fa-solid ${r.icon}"></i> ${r.name}
+                            <i class="fa-solid fa-times" style="cursor:pointer; margin-left:10px; opacity:0.6;" onclick="deleteRole('${r.id}')" title="Удалить роль"></i>
+                        </div>
+                    `).join('');
+                }
+            }
+        }
+
+        // --- ПРОФИЛИ И ИГРОКИ ---
+        function openProfile(username) {
+            currentViewProfileUser = users.find(u => u.username === username);
+            if (!currentViewProfileUser) return;
+            
+            switchMainView('profile');
+            switchProfileTab('profile-overview');
+            
+            document.getElementById('profileName').innerText = currentViewProfileUser.username;
+            document.getElementById('profileAbout').innerText = currentViewProfileUser.about || "Пользователь пока ничего не рассказал о себе.";
+            
+            // Внедрение бэйджа роли
+            document.getElementById('profileRoleBadge').innerHTML = getProfileBadgeRoleHTML(currentViewProfileUser);
+            
+            const avatarEl = document.getElementById('profileAvatar');
+            if (currentViewProfileUser.avatar) {
+                avatarEl.style.backgroundImage = `url('${currentViewProfileUser.avatar}')`;
+                avatarEl.innerHTML = '';
+            } else {
+                avatarEl.style.backgroundImage = 'none';
+                avatarEl.innerHTML = '<i class="fa-solid fa-user"></i>';
+            }
+
+            const bannerEl = document.getElementById('profileBanner');
+            if (currentViewProfileUser.banner) {
+                bannerEl.style.backgroundImage = `url('${currentViewProfileUser.banner}')`;
+            } else {
+                bannerEl.style.backgroundImage = 'linear-gradient(135deg, rgba(139, 92, 246, 0.2) 0%, rgba(24, 24, 27, 0.8) 100%)';
+            }
+
+            const settingsTab = document.getElementById('profileSettingsTab');
+            const actionsContainer = document.getElementById('profileActions');
+            actionsContainer.innerHTML = '';
+
+            if (currentUser && currentUser.username === currentViewProfileUser.username) {
+                settingsTab.classList.remove('hidden');
+                document.getElementById('avatarFileInp').value = ""; // Сбрасываем поле загрузки файла
+                document.getElementById('bannerUrlInp').value = currentViewProfileUser.banner || '';
+                document.getElementById('aboutInp').value = currentViewProfileUser.about || '';
+            } else {
+                settingsTab.classList.add('hidden');
+                if (currentUser) {
+                    const isFriend = currentUser.friends && currentUser.friends.includes(currentViewProfileUser.username);
+                    if (isFriend) { actionsContainer.innerHTML = `<button class="btn-add btn-secondary" onclick="removeFriend('${currentViewProfileUser.username}')"><i class="fa-solid fa-user-minus"></i> Удалить из друзей</button>`; } 
+                    else { actionsContainer.innerHTML = `<button class="btn-add" onclick="addFriend('${currentViewProfileUser.username}')"><i class="fa-solid fa-user-plus"></i> Добавить в друзья</button>`; }
+                }
+            }
+            renderProfileFriends();
+        }
+
+        function saveProfileSettings() {
+            if (!currentUser) return;
+            
+            currentUser.banner = document.getElementById('bannerUrlInp').value.trim();
+            currentUser.about = document.getElementById('aboutInp').value.trim();
+            
+            const fileInput = document.getElementById('avatarFileInp');
+            const file = fileInput.files[0];
+
+            const finishSave = () => {
+                const userIndex = users.findIndex(u => u.username === currentUser.username);
+                if (userIndex !== -1) users[userIndex] = currentUser;
+                
+                saveUsers();
+                showToast("Настройки профиля сохранены!");
+                openProfile(currentUser.username);
+            };
+
+            // Чтение файла с ПК для аватарки
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    currentUser.avatar = e.target.result;
+                    finishSave();
+                }
+                reader.readAsDataURL(file);
+            } else {
+                finishSave();
+            }
+        }
+
+        function addFriend(username) {
+            if (!currentUser) return;
+            if (!currentUser.friends) currentUser.friends = [];
+            if (!currentUser.friends.includes(username)) {
+                currentUser.friends.push(username);
+                const targetUser = users.find(u => u.username === username);
+                if (targetUser) {
+                    if (!targetUser.friends) targetUser.friends = [];
+                    if (!targetUser.friends.includes(currentUser.username)) targetUser.friends.push(currentUser.username);
+                }
+                saveUsers(); showToast(`Вы добавили ${username} в друзья!`); openProfile(username); 
+            }
+        }
+
+        function removeFriend(username) {
+            if (!currentUser) return;
+            if (currentUser.friends) currentUser.friends = currentUser.friends.filter(f => f !== username);
+            const targetUser = users.find(u => u.username === username);
+            if (targetUser && targetUser.friends) targetUser.friends = targetUser.friends.filter(f => f !== currentUser.username);
+            saveUsers(); showToast(`${username} удален из друзей.`); openProfile(username);
+        }
+
+        function renderProfileFriends() {
+            const container = document.getElementById('profileFriendsList');
+            const friends = currentViewProfileUser.friends || [];
+            
+            if (friends.length === 0) {
+                container.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: var(--text-dim); padding: 40px; background: rgba(0,0,0,0.2); border-radius: 16px; border: 1px solid var(--border-glass);">У пользователя пока нет друзей.</div>`;
+                return;
+            }
+            
+            container.innerHTML = friends.map(f => {
+                const friendObj = users.find(u => u.username === f);
+                if (!friendObj) return '';
+                const avatarStyle = friendObj.avatar ? `background-image: url('${friendObj.avatar}');` : '';
+                const avatarContent = friendObj.avatar ? '' : '<i class="fa-solid fa-user"></i>';
+                
+                return `
+                    <div class="glass player-card" onclick="openProfile('${friendObj.username}')">
+                        <div class="player-avatar" style="${avatarStyle}">${avatarContent}</div>
+                        <div class="player-info">
+                            <div class="player-name">${friendObj.username}</div>
+                            <div class="player-status">${getUserRoleHTML(friendObj)}</div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function renderPlayers() {
+            const container = document.getElementById('playersGrid');
+            const search = document.getElementById('playerSearchInput') ? document.getElementById('playerSearchInput').value.toLowerCase() : '';
+            const filteredUsers = users.filter(u => u.username.toLowerCase().includes(search));
+            
+            if (filteredUsers.length === 0) {
+                container.innerHTML = `<div style="grid-column: 1/-1; text-align: center; color: var(--text-dim); padding: 40px; background: rgba(0,0,0,0.2); border-radius: 16px; border: 1px solid var(--border-glass);">Игроки не найдены.</div>`;
+                return;
+            }
+            
+            container.innerHTML = filteredUsers.map(u => {
+                const avatarStyle = u.avatar ? `background-image: url('${u.avatar}');` : '';
+                const avatarContent = u.avatar ? '' : '<i class="fa-solid fa-user"></i>';
+                return `
+                    <div class="glass player-card" onclick="openProfile('${u.username}')">
+                        <div class="player-avatar" style="${avatarStyle}">${avatarContent}</div>
+                        <div class="player-info">
+                            <div class="player-name">${u.username}</div>
+                            <div class="player-status">${getUserRoleHTML(u)}</div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // --- ПОСТЫ (НОВОСТИ) ---
+        function renderPosts() {
+            const grid = document.getElementById('newsGrid');
+            const search = document.getElementById('searchInput').value.toLowerCase();
+            
+            grid.innerHTML = posts
+                .filter(p => p.title.toLowerCase().includes(search) || p.text.toLowerCase().includes(search))
+                .map((p, i) => {
+                    const authorObj = users.find(u => u.username === p.author);
+                    return `
+                    <div class="glass article-card">
+                        <div class="card-body">
+                            <div>
+                                <div class="card-tag">${p.tag}</div>
+                                <h3 class="card-title">${p.title}</h3>
+                                <p class="card-text">${p.text}</p>
+                            </div>
+                            <div class="card-footer">
+                                <span><i class="fa-solid fa-user-pen" style="margin-right:6px"></i> ${getUserRoleHTML(authorObj || {username: p.author})}</span>
+                                ${(currentUser && currentUser.username === 'resht1') ? 
+                                `<span onclick="deletePost(${i})" style="color: #ef4444; cursor:pointer;"><i class="fa-solid fa-trash"></i></span>` : ''}
+                            </div>
+                        </div>
+                    </div>
+                `}).join('');
+        }
+
+        function savePost() {
+            const t = document.getElementById('titleInp').value;
+            const tg = document.getElementById('tagInp').value;
+            const tx = document.getElementById('textInp').value;
+            if(!t || !tx) return;
+            
+            posts.unshift({ title: t, tag: tg || "НОВОСТЬ", text: tx, author: currentUser.username });
+            localStorage.setItem('vanillas_posts', JSON.stringify(posts));
+            document.getElementById('titleInp').value = ''; document.getElementById('tagInp').value = ''; document.getElementById('textInp').value = '';
+            
+            renderPosts(); showToast("Новость успешно опубликована!"); switchMainView('home');
+        }
+
+        function deletePost(i) {
+            if (confirm("Точно удалить пост?")) { posts.splice(i, 1); localStorage.setItem('vanillas_posts', JSON.stringify(posts)); renderPosts(); }
+        }
+
+        function saveSiteSettings() {
+            siteSettings.title = document.getElementById('siteTitleInp').value || "VANILLAS";
+            siteSettings.description = document.getElementById('siteDescInp').value || "Чистое выживание без границ";
+            localStorage.setItem('vanillas_settings', JSON.stringify(siteSettings));
+            updateUI(); showToast("Настройки сайта сохранены!");
+        }
+
+        // --- ТИКЕТЫ (ПОДДЕРЖКА) ---
+        function createNewTicket() {
+            const subject = document.getElementById('newTicketSubject').value.trim();
+            if (!subject) return;
+            const newTicket = { id: Date.now(), author: currentUser.username, subject: subject, status: 'open', date: new Date().toLocaleDateString('ru-RU', { hour: '2-digit', minute:'2-digit' }), messages: [] };
+            tickets.push(newTicket); localStorage.setItem('vanillas_tickets', JSON.stringify(tickets));
+            closeModals(); showToast("Тикет создан!"); openTicketChat(newTicket.id);
+        }
+
+        function renderUserTickets() {
+            const container = document.getElementById('userTicketsContainer');
+            let userTickets = tickets.filter(t => t.author === currentUser.username).sort((a,b) => b.id - a.id);
+            if (!userTickets.length) { container.innerHTML = '<div style="text-align: center; color: var(--text-dim); padding: 20px;">У вас пока нет обращений.</div>'; return; }
+            container.innerHTML = userTickets.map(t => `<div class="ticket-item ${t.id === activeTicketId ? 'active' : ''}" onclick="openTicketChat(${t.id})"><div class="ticket-info"><span class="ticket-subject" style="${t.id === activeTicketId ? 'color: var(--accent);' : ''}">${t.subject}</span><span class="ticket-meta">${t.date}</span></div><div class="ticket-status ${t.status === 'open' ? 'status-open' : 'status-closed'}">${t.status === 'open' ? 'Открыт' : 'Закрыт'}</div></div>`).join('');
+        }
+
+        function openTicketChat(id) {
+            activeTicketId = id; renderUserTickets(); const ticket = tickets.find(t => t.id === id);
+            document.getElementById('supportEmptyState').classList.add('hidden'); document.getElementById('supportActiveChat').classList.remove('hidden'); document.getElementById('supportChatTitle').innerText = ticket.subject;
+            const statusEl = document.getElementById('supportChatStatus'); statusEl.className = 'ticket-status ' + (ticket.status === 'open' ? 'status-open' : 'status-closed'); statusEl.innerText = ticket.status === 'open' ? 'Открыт' : 'Закрыт';
+            document.getElementById('supportChatInputArea').classList.toggle('hidden', ticket.status === 'closed'); renderSupportMessages();
+        }
+
+        function renderSupportMessages() {
+            const ticket = tickets.find(t => t.id === activeTicketId);
+            const chatBox = document.getElementById('supportChatMessages');
+            if (!ticket.messages.length) { chatBox.innerHTML = '<div style="text-align:center; color: var(--text-dim); margin: auto;">Опишите вашу проблему подробнее...</div>'; } 
+            else { chatBox.innerHTML = ticket.messages.map(m => `<div class="message ${m.sender === currentUser.username ? 'msg-self' : 'msg-other'}"><span class="msg-sender">${m.sender === 'resht1' ? 'Администрация' : m.sender} • ${m.time}</span>${m.text}</div>`).join(''); }
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        function sendSupportMessage() {
+            const input = document.getElementById('supportChatInput'); if (!input.value.trim() || !activeTicketId) return;
+            const ticket = tickets.find(t => t.id === activeTicketId);
+            if (ticket && ticket.status === 'open') { ticket.messages.push({ sender: currentUser.username, text: input.value.trim(), time: new Date().toLocaleTimeString('ru-RU', { hour: '2-digit', minute:'2-digit' }) }); localStorage.setItem('vanillas_tickets', JSON.stringify(tickets)); input.value = ''; renderSupportMessages(); }
+        }
+        function handleSupportEnter(e) { if (e.key === 'Enter') sendSupportMessage(); }
+
+        function renderAdminTickets() {
+            const container = document.getElementById('adminTicketsContainer');
+            let allTickets = [...tickets].sort((a,b) => b.id - a.id);
+            if (!allTickets.length) { container.innerHTML = '<div style="text-align: center; color: var(--text-dim); padding: 20px;">Нет активных запросов.</div>'; return; }
+            container.innerHTML = allTickets.map(t => `<div class="ticket-item ${t.id === activeTicketId ? 'active' : ''}" onclick="openAdminTicketChat(${t.id})"><div class="ticket-info"><span class="ticket-subject" style="${t.id === activeTicketId ? 'color: var(--accent);' : ''}">${t.subject}</span><span class="ticket-meta">${t.author} • ${t.date}</span></div><div class="ticket-status ${t.status === 'open' ? 'status-open' : 'status-closed'}">${t.status === 'open' ? 'Открыт' : 'Закрыт'}</div></div>`).join('');
+        }
+
+        function openAdminTicketChat(id) {
+            activeTicketId = id; renderAdminTickets(); const ticket = tickets.find(t => t.id === id);
+            document.getElementById('adminSupportEmptyState').classList.add('hidden'); document.getElementById('adminSupportActiveChat').classList.remove('hidden'); document.getElementById('adminChatTitle').innerText = ticket.subject; document.getElementById('adminChatAuthor').innerText = 'Игрок: ' + ticket.author;
+            const statusEl = document.getElementById('adminChatStatus'); statusEl.className = 'ticket-status ' + (ticket.status === 'open' ? 'status-open' : 'status-closed'); statusEl.innerText = ticket.status === 'open' ? 'Открыт' : 'Закрыт';
+            document.getElementById('adminChatInputArea').classList.toggle('hidden', ticket.status === 'closed'); document.getElementById('adminCloseTicketBtn').classList.toggle('hidden', ticket.status === 'closed'); renderAdminSupportMessages();
+        }
+
+        function renderAdminSupportMessages() {
+            const ticket = tickets.find(t => t.id === activeTicketId);
+            const chatBox = document.getElementById('adminChatMessages');
+            if (!ticket.messages.length) { chatBox.innerHTML = '<div style="text-align:center; color: var(--text-dim); margin: auto;">Пользователь еще не отправил сообщений.</div>'; } 
+            else { chatBox.innerHTML = ticket.messages.map(m => `<div class="message ${m.sender === 'resht1' ? 'msg-self' : 'msg-other'}"><span class="msg-sender">${m.sender === 'resht1' ? 'Вы' : m.sender} • ${m.time}</span>${m.text}</div>`).join(''); }
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        function sendAdminSupportMessage() {
+            const input = document.getElementById('adminChatInput'); if (!input.value.trim() || !activeTicketId) return;
+            const ticket = tickets.find(t => t.id === activeTicketId);
+            if (ticket && ticket.status === 'open') { ticket.messages.push({ sender: currentUser.username, text: input.value.trim(), time: new Date().toLocaleTimeString('ru-RU', { hour: '2-digit', minute:'2-digit' }) }); localStorage.setItem('vanillas_tickets', JSON.stringify(tickets)); input.value = ''; renderAdminSupportMessages(); }
+        }
+        function handleAdminSupportEnter(e) { if (e.key === 'Enter') sendAdminSupportMessage(); }
+
+        function closeActiveTicket() {
+            const ticket = tickets.find(t => t.id === activeTicketId);
+            if (ticket) { ticket.status = 'closed'; ticket.messages.push({ sender: 'Система', text: 'Запрос закрыт администратором.', time: new Date().toLocaleTimeString('ru-RU', { hour: '2-digit', minute:'2-digit' }) }); localStorage.setItem('vanillas_tickets', JSON.stringify(tickets)); openAdminTicketChat(activeTicketId); showToast("Тикет закрыт"); }
+        }
+
+        // --- МОДАЛКИ (АВТОРИЗАЦИЯ) ---
+        function openModal(id) { closeModals(); document.getElementById(id).classList.add('show'); }
+        function closeModals() {
+            document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('show'));
+            document.querySelectorAll('.error-msg').forEach(e => e.style.display = 'none');
+            document.getElementById('loginPassword').value = ''; document.getElementById('regPassword').value = '';
+        }
+        window.onclick = function(e) { if (e.target.classList.contains('modal-overlay')) closeModals(); }
+
+        function register() {
+            const user = document.getElementById('regUsername').value.trim();
+            const pass = document.getElementById('regPassword').value.trim();
+            const errEl = document.getElementById('regError');
+            errEl.style.display = 'none';
+
+            if (!user || !pass) return;
+            
+            // Валидация никнейма (длина >= 5, не только цифры)
+            if (user.length < 5) { errEl.innerText = "Ник должен быть не короче 5 символов"; errEl.style.display = 'block'; return; }
+            if (/^\d+$/.test(user)) { errEl.innerText = "Ник не может состоять только из цифр"; errEl.style.display = 'block'; return; }
+            
+            // Валидация пароля (длина >= 8, наличие букв и цифр)
+            if (pass.length < 8 || !/\d/.test(pass) || !/[a-zA-Zа-яА-Я]/.test(pass)) { 
+                errEl.innerText = "Пароль должен быть от 8 символов и содержать буквы и цифры"; 
+                errEl.style.display = 'block'; 
+                return; 
+            }
+
+            if (users.find(u => u.username === user)) { errEl.innerText = "Пользователь уже существует"; errEl.style.display = 'block'; return; }
+            
+            const newUser = { 
+                username: user, 
+                password: pass,
+                avatar: '',
+                banner: '',
+                about: '',
+                friends: [],
+                roleId: null // Поле для ID роли
+            }; 
+            users.push(newUser);
+            
+            currentUser = newUser; 
+            saveUsers();
+            
+            closeModals(); updateUI(); showToast("Успешная регистрация!");
+        }
+
+        function login() {
+            const user = document.getElementById('loginUsername').value.trim(), pass = document.getElementById('loginPassword').value.trim();
+            const foundUser = users.find(u => u.username === user && u.password === pass);
+            if (foundUser) {
+                currentUser = foundUser; 
+                saveUsers();
+                closeModals(); updateUI(); showToast(`С возвращением, ${user}!`);
+            } else { document.getElementById('loginError').style.display = 'block'; }
+        }
+
+        function logout() { currentUser = null; localStorage.removeItem('vanillas_currentUser'); updateUI(); }
+
+        function copyIP() { 
+            navigator.clipboard.writeText("pl1.hoxen.one:25518"); 
+            const ipText = document.getElementById('ip-text'), originalText = ipText.innerText;
+            ipText.innerText = "Скопировано!";
+            setTimeout(() => { ipText.innerText = originalText; }, 2000);
+        }
+
+        document.getElementById('searchInput').addEventListener('input', renderPosts);
+        updateUI();
+    </script>
+</body>
+</html>
